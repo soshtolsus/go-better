@@ -18,7 +18,7 @@ type WorkerPool interface {
 }
 
 //get a fresh instance of a WorkerPool
-func New(size uint) WorkerPool {
+func NewWorkerPool(size uint) WorkerPool {
 	to_return := new(workerPool)
 	to_return.available_goroutines = make(chan interface{}, size)
 	for i:=uint(0); i<size; i++ {
