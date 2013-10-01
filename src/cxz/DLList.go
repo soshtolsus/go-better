@@ -11,18 +11,18 @@ type dlList struct {
 }
 
 type DLList interface {
-	First() Element
-	Last() Element
-	Next() Element
-	Prev() Element
-	Current() Element
+	//First() Element
+	//Last() Element
+	//Next() Element
+	//Prev() Element
+	//Current() Element
 	Length() uint
 	LPush(func()) //ATTN: insert generic here
-	RPush(func()) //ATTN: insert generic here
-	LPop() Element
+	//RPush(func()) //ATTN: insert generic here
+	//LPop() Element
 	RPop() Element
-	LPeek() Element
-	RPeek() Element
+	//LPeek() Element
+	//RPeek() Element
 	Lock()
 	Unlock()
 }
@@ -31,16 +31,21 @@ func NewDLList() DLList {
 	return new(dlList) //NOTE: leaves everything nil or zero
 }
 
+/*
 func (self *dlList) First() Element {
 	self.current = self.first
 	return self.current
 }
+*/
 
+/*
 func (self *dlList) Last() Element {
 	self.current = self.last
 	return self.current
 }
+*/
 
+/*
 func (self *dlList) Next() Element {
 	if self.current == nil {
 		return nil
@@ -48,7 +53,9 @@ func (self *dlList) Next() Element {
 	self.current = self.current.next
 	return self.current
 }
+*/
 
+/*
 func (self *dlList) Prev() Element {
 	if self.current == nil {
 		return nil
@@ -56,10 +63,13 @@ func (self *dlList) Prev() Element {
 	self.current = self.current.prev
 	return self.current
 }
+*/
 
+/*
 func (self *dlList) Current() Element {
 	return self.current
 }
+*/
 
 func (self *dlList) Length() uint {
 	return self.length
@@ -78,6 +88,7 @@ func (self *dlList) LPush(f func()) {
 	self.Unlock()
 }
 
+/*
 func (self *dlList) RPush(f func()) {
 	self.Lock()
 
@@ -90,7 +101,9 @@ func (self *dlList) RPush(f func()) {
 
 	self.Unlock()
 }
+*/
 
+/*
 func (self *dlList) LPop() Element {
 	self.Lock()
 
@@ -104,6 +117,7 @@ func (self *dlList) LPop() Element {
 
 	return to_return
 }
+*/
 
 func (self *dlList) RPop() Element {
 	self.Lock()
@@ -119,13 +133,17 @@ func (self *dlList) RPop() Element {
 	return to_return
 }
 
+/*
 func (self *dlList) LPeek() Element {
 	return self.first
 }
+*/
 
+/*
 func (self *dlList) RPeek() Element {
 	return self.last
 }
+*/
 
 func (self *dlList) addFirstElement(f func()) {
 	self.current = &element{value: f}
