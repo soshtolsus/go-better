@@ -6,8 +6,8 @@ type dlList struct {
 	first *element
 	last *element
 	current *element
-	length int
-	mod_locker sync.Mutex
+	length uint
+	sync.Mutex
 }
 
 type DLList interface {
@@ -16,55 +16,57 @@ type DLList interface {
 	Next() Element
 	Prev() Element
 	Current() Element
-	Length() int
+	Length() uint
 	LPush(func()) //ATTN: insert generic here
 	RPush(func()) //ATTN: insert generic here
 	LPop() Element
 	RPop() Element
 	LPeek() Element
 	RPeek() Element
+	Lock()
+	Unlock()
 }
 
-func NewRLList() DLList {
+func NewDLList() DLList {
 	return new(dlList) //NOTE: leaves everything nil or zero
 }
 
-func (self *rlList) First() Element {
+func (self *dlList) First() Element {
 	self.current = self.first
 	return self.current
 }
 
-func (self *rlList) Last() Element {
+func (self *dlList) Last() Element {
 	self.current = self.last
 	return self.current
 }
 
-func (self *rlList) Next() Element {
+func (self *dlList) Next() Element {
 	if self.current == nil {
 		return nil
 	}
-	self.current = self.current.Next()
+	self.current = self.current.next
 	return self.current
 }
 
-func (self *rlList) Prev() Element {
+func (self *dlList) Prev() Element {
 	if self.current == nil {
 		return nil
 	}
-	self.current = self.current.Prev()
+	self.current = self.current.prev
 	return self.current
 }
 
-func (self *rlList) Current() Element {
+func (self *dlList) Current() Element {
 	return self.current
 }
 
-func (self *rlList) Length() int {
+func (self *dlList) Length() uint {
 	return self.length
 }
 
-func (self *rlList) LPush(f func()) {
-	self.mod_locker.Lock()
+func (self *dlList) LPush(f func()) {
+	self.Lock()
 
 	if self.current == nil {
 		self.addFirstElement(f)
@@ -73,11 +75,11 @@ func (self *rlList) LPush(f func()) {
 		self.first = self.first.prev
 	}
 
-	self.mod_locker.Unlock()
+	self.Unlock()
 }
 
-func (self *rlList) RPush(f func()) {
-	self.mod_locker.Lock()
+func (self *dlList) RPush(f func()) {
+	self.Lock()
 
 	if self.current == nil {
 		self.addFirstElement(f)
@@ -86,44 +88,46 @@ func (self *rlList) RPush(f func()) {
 		self.last = self.last.next
 	}
 
-	self.mod_locker.Unlock()
+	self.Unlock()
 }
 
-func (self *rlList) LPop() Element {
-	self.mod_locker.Lock()
+func (self *dlList) LPop() Element {
+	self.Lock()
 
 	to_return := self.first
 	if self.current == self.first {
 		self.current = self.first.next
 	}
 	self.first = self.first.next
-	return to_return
 
-	self.mod_locker.Unlock()
+	self.Unlock()
+
+	return to_return
 }
 
-func (self *rlList) RPop() Element {
-	self.mod_locker.Lock()
+func (self *dlList) RPop() Element {
+	self.Lock()
 
 	to_return := self.last
 	if self.current == self.last {
 		self.current = self.last.prev
 	}
 	self.last = self.last.prev
-	return to_return
 
-	self.mod_locker.Unlock()
+	self.Unlock()
+
+	return to_return
 }
 
-func (self *rlList) LPeek() Element {
+func (self *dlList) LPeek() Element {
 	return self.first
 }
 
-func (self *rlList) RPeek() Element {
-	return self.last5
+func (self *dlList) RPeek() Element {
+	return self.last
 }
 
-func (self *rlList) addFirstElement(f func()) {
+func (self *dlList) addFirstElement(f func()) {
 	self.current = &element{value: f}
 	self.first = self.current
 	self.last = self.current
