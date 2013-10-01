@@ -66,6 +66,8 @@ func (self *workerPool) do_the_needful(f func()) {
 
 	if self.waiting_processes.Length() < self.max_size {
 		self.start_needful(f)
+	} else {
+		self.waiting_processes.LPush(f)
 	}
 
 	self.waiting_processes.Unlock()
