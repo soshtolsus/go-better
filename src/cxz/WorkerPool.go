@@ -2,6 +2,17 @@ package WorkerPool
 
 import "sync"
 
+//NOTE: why not use a channel?
+// 1. can't get length of channel
+// 2. when processes block on read from a channel, when the channel
+//    gets a new item, *all* waiting processes read the new item
+//NOTE: why not use a normal slice/array?
+// 1. append sucks
+// 2. prepend sucks more
+//NOTE: why not use the stdlib container/list?
+// 1. too generic (boxing/unboxing)
+// 2. not necessarily concurrency-safe
+
 type workerPool struct {
 	max_size uint
 	waiting_processes DLList
