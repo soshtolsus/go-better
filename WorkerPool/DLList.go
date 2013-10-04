@@ -13,7 +13,7 @@ import "sync"
 type dlList struct {
 	first *element
 	last *element
-	current *element
+	//current *element
 	length uint
 	sync.Mutex
 }
@@ -86,11 +86,12 @@ func (self *dlList) Length() uint {
 func (self *dlList) LPush(f func()) {
 	self.Lock()
 
-	if self.current == nil {
+	if self.length == 0 {
 		self.addFirstElement(f)
 	} else {
 		self.first.prev = &element{value: f, next: self.first}
 		self.first = self.first.prev
+		self.length++
 	}
 
 	self.Unlock()
@@ -100,7 +101,7 @@ func (self *dlList) LPush(f func()) {
 func (self *dlList) RPush(f func()) {
 	self.Lock()
 
-	if self.current == nil {
+	if self.length == 0 {
 		self.addFirstElement(f)
 	} else {
 		self.last.next = &element{value: f, prev: self.last}
@@ -131,10 +132,13 @@ func (self *dlList) RPop() Element {
 	self.Lock()
 
 	to_return := self.last
-	if self.current == self.last {
-		self.current = self.last.prev
+	// if self.current == self.last {
+	// 	self.current = self.last.prev
+	// }
+	if self.last != nil {
+		self.last = self.last.prev
+		self.length--
 	}
-	self.last = self.last.prev
 
 	self.Unlock()
 
@@ -154,7 +158,11 @@ func (self *dlList) RPeek() Element {
 */
 
 func (self *dlList) addFirstElement(f func()) {
-	self.current = &element{value: f}
-	self.first = self.current
-	self.last = self.current
+	// self.current = &element{value: f}
+	// self.first = self.current
+	// self.last = self.current
+	temp := &element{value: f}
+	self.first = temp
+	self.last = temp
+	self.length = 1
 }
